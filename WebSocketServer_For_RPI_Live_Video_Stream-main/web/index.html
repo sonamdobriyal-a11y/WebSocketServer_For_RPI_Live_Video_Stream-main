@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Live Stream</title></head>
+<body>
+  <h1>Live Video Stream from Raspberry Pi</h1>
+  <img id="video" src="/latest.jpg" width="640" />
+  <script>
+    setInterval(() => {
+      const img = document.getElementById("video");
+      img.src = "/latest.jpg?t=" + new Date().getTime();
+    }, 500);
+  </script>
+</body>
+</html>
