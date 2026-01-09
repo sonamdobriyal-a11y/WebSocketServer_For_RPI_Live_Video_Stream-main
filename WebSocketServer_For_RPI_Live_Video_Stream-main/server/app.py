@@ -39,7 +39,7 @@ def ws_client(ws):
     try:
         if os.path.exists(IMAGE_PATH):
             with open(IMAGE_PATH, "rb") as f:
-                ws.send(f.read(), binary=True)
+                ws.send(f.read())
         while True:
             msg = ws.receive()
             if msg is None:
@@ -65,7 +65,7 @@ def _broadcast(data):
     with _clients_lock:
         for client in _clients:
             try:
-                client.send(data, binary=True)
+                client.send(data)
             except Exception:
                 dead.append(client)
         for client in dead:
