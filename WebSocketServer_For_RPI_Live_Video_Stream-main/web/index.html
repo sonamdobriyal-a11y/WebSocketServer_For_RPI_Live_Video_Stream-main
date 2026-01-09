@@ -3,12 +3,43 @@
 <head><title>Live Stream</title></head>
 <body>
   <h1>Live Video Stream from Raspberry Pi</h1>
-  <img id="video" src="/latest.jpg" width="640" />
+  <p id="status">Connecting...</p>
+  <img id="video" width="640" />
   <script>
-    setInterval(() => {
-      const img = document.getElementById("video");
-      img.src = "/latest.jpg?t=" + new Date().getTime();
-    }, 500);
+    const statusEl = document.getElementById("status");
+    const img = document.getElementById("video");
+    const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws";
+    let currentUrl = null;
+
+    function connect() {
+      const ws = new WebSocket(wsUrl);
+      ws.binaryType = "arraybuffer";
+
+      ws.onopen = () => {
+        statusEl.textContent = "Connected";
+      };
+
+      ws.onmessage = (event) => {
+        const blob = new Blob([event.data], { type: "image/jpeg" });
+        const nextUrl = URL.createObjectURL(blob);
+        img.src = nextUrl;
+        if (currentUrl) {
+          URL.revokeObjectURL(currentUrl);
+        }
+        currentUrl = nextUrl;
+      };
+
+      ws.onclose = () => {
+        statusEl.textContent = "Disconnected. Reconnecting...";
+        setTimeout(connect, 1000);
+      };
+
+      ws.onerror = () => {
+        statusEl.textContent = "WebSocket error";
+      };
+    }
+
+    connect();
   </script>
 </body>
 </html>
