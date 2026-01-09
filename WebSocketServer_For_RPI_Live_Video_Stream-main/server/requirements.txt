@@ -2,3 +2,4 @@ flask
 gunicorn
 flask-sock
 gevent
+gevent-websocket
