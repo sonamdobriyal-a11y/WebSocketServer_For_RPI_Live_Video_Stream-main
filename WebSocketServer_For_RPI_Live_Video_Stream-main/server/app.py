@@ -7,6 +7,7 @@ app = Flask(__name__)
 sock = Sock(app)
 IMAGE_PATH = "latest.jpg"
 INDEX_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "web", "index.html"))
+STREAM_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "web", "stream.html"))
 _clients = set()
 _clients_lock = threading.Lock()
 
@@ -31,6 +32,12 @@ def index():
     if os.path.exists(INDEX_PATH):
         return send_file(INDEX_PATH)
     return "<h1>Server running</h1>"
+
+@app.route("/stream")
+def stream():
+    if os.path.exists(STREAM_PATH):
+        return send_file(STREAM_PATH)
+    return "No stream page", 404
 
 @sock.route("/ws")
 def ws_client(ws):
